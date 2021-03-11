@@ -46,7 +46,7 @@ DMA_HandleTypeDef hdma_adc1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+uint32_t ADCData[4]={0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,7 +61,11 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint16_t Time_Stamp = 0;
+uint16_t Response_Time = 0;
+uint16_t Random_Time = 0;
+uint16_t Count = 0;
+uint16_t Error = 0;
 /* USER CODE END 0 */
 
 /**
@@ -96,16 +100,18 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_ADC_Start_DMA(&hadc1, ADCData, 4);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
@@ -177,13 +183,13 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.ScanConvMode = ENABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.NbrOfConversion = 4;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
@@ -297,7 +303,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
@@ -312,6 +318,39 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == GPIO_PIN_13)
+	{
+		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+		if (Count == 0)
+		{
+			Error = 0;
+			Random_Time = HAL_GetTick() + 1000 + ((22695477*HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))+HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1))%10000;
+			Count = 1;
+			Response_Time = 0;
+		}
+
+		if (HAL_GetTick() >= Random_Time)
+		{
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+			Time_Stamp = HAL_GetTick();
+		}
+
+		if ((Count == 1) & (HAL_GPIO_ReadPin(LD2_GPIO_Port, LD2_Pin) == 0))
+		{
+			Error = 1;
+			Count = 0;
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+		}
+
+		else if ((Count == 1) & (HAL_GPIO_ReadPin(LD2_GPIO_Port, LD2_Pin) == 1))
+		{
+			Count = 0;
+			Response_Time = HAL_GetTick() - Time_Stamp;
+		}
+	}
+}
 /* USER CODE END 4 */
 
 /**

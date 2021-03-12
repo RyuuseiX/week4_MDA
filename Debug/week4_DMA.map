@@ -84,7 +84,7 @@ Discarded input sections
  .data          0x0000000000000000        0x0 Core/Src/main.o
  .bss           0x0000000000000000        0x0 Core/Src/main.o
  .bss.Time_Stamp
-                0x0000000000000000        0x2 Core/Src/main.o
+                0x0000000000000000        0x4 Core/Src/main.o
  .bss.Response_Time
                 0x0000000000000000        0x2 Core/Src/main.o
  .bss.Random_Time

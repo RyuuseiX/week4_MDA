@@ -47,6 +47,11 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 uint32_t ADCData[4]={0};
+uint16_t Time_Stamp = 0;
+uint16_t Response_Time = 0;
+uint16_t Random_Time = 0;
+uint16_t Count = 0;
+uint16_t Error = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,11 +66,7 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint16_t Time_Stamp = 0;
-uint16_t Response_Time = 0;
-uint16_t Random_Time = 0;
-uint16_t Count = 0;
-uint16_t Error = 0;
+
 /* USER CODE END 0 */
 
 /**

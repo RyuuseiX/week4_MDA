@@ -76,7 +76,6 @@ static void MX_ADC1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,12 +101,39 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, ADCData, 4);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  if (Count == 0)
+	  {
+		  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
+	  }
+	  else if (Count == 1)
+	  {
+
+		  Time_Stamp = HAL_GetTick();
+		  if (HAL_GetTick() - Time_Stamp >= Random_Time)
+		  {
+			  Count = 2;
+			  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
+
+		  }
+	  }
+	  else if (Count == 3)
+	  {
+		  Count = 0;
+	  }
+
+	  if (Error == 1)
+	  {
+		  Count = 0;
+		  Error = 0;
+	  }
+
 
     /* USER CODE END WHILE */
 
@@ -304,7 +330,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING_FALLING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
@@ -315,6 +341,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
@@ -323,33 +353,23 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == GPIO_PIN_13)
 	{
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
 		if (Count == 0)
 		{
-			Error = 0;
-			Random_Time = HAL_GetTick() + 1000 + ((22695477*HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))+HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1))%10000;
 			Count = 1;
-			Response_Time = 0;
+			Random_Time = 1000 + (((22695477*ADCData[0])+ADCData[1])%1000);
 		}
 
-		if (HAL_GetTick() >= Random_Time)
+		else if (Count == 2)
 		{
-			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
-			Time_Stamp = HAL_GetTick();
+			Count = 3;
+			Response_Time = HAL_GetTick() - (Time_Stamp + Random_Time);
 		}
 
-		if ((Count == 1) & (HAL_GPIO_ReadPin(LD2_GPIO_Port, LD2_Pin) == 0))
+		else
 		{
 			Error = 1;
-			Count = 0;
-			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
 		}
 
-		else if ((Count == 1) & (HAL_GPIO_ReadPin(LD2_GPIO_Port, LD2_Pin) == 1))
-		{
-			Count = 0;
-			Response_Time = HAL_GetTick() - Time_Stamp;
-		}
 	}
 }
 /* USER CODE END 4 */

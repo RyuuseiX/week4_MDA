@@ -101,39 +101,13 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, ADCData, 4);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if (Count == 0)
-	  {
-		  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
-	  }
-	  else if (Count == 1)
-	  {
-
-		  Time_Stamp = HAL_GetTick();
-		  if (HAL_GetTick() - Time_Stamp >= Random_Time)
-		  {
-			  Count = 2;
-			  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
-
-		  }
-	  }
-	  else if (Count == 3)
-	  {
-		  Count = 0;
-	  }
-
-	  if (Error == 1)
-	  {
-		  Count = 0;
-		  Error = 0;
-	  }
-
 
     /* USER CODE END WHILE */
 
@@ -355,19 +329,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 		if (Count == 0)
 		{
-			Count = 1;
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
 			Random_Time = 1000 + (((22695477*ADCData[0])+ADCData[1])%1000);
+			Count = 1;
+			Time_Stamp = HAL_GetTick();
+			if (HAL_GetTick() - Time_Stamp >= Random_Time)
+			{
+				HAL_GPIO_TogglePin(GPIOx, GPIO_Pin)
+			}
 		}
-
-		else if (Count == 2)
+		else if (Count == 1)
 		{
-			Count = 3;
-			Response_Time = HAL_GetTick() - (Time_Stamp + Random_Time);
-		}
+			if (HAL_GetTick() - Time_Stamp >= Random_Time)
+			{
+				Response_Time = HAL_GetTick() - Time_Stamp - Random_Time;
+			}
 
-		else
-		{
-			Error = 1;
+			else
+			{
+				Count = 0;
+			}
 		}
 
 	}

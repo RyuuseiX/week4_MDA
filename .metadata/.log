@@ -16,3 +16,30 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY com.st.stm32cube.ide.mcu.ide 4 4 2021-03-24 23:15:26.979
 !MESSAGE com.st.stm32cube.ide.mcu.ide/META-INF/version/build_ref file not found, build reference will not be reported into properties
+!SESSION 2021-03-27 05:33:39.664 -----------------------------------------------
+eclipse.buildId=Version 1.5.1
+java.version=1.8.0_272
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2021-03-27 05:34:18.043
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2021-03-27 05:34:18.571
+!MESSAGE Log4j initialized with config file C:\Users\Ryuusei\Documents\GitHub\Microcon C++\week4_MDA\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2021-03-27 05:34:33.028
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 4 4 2021-03-27 05:34:33.440
+!MESSAGE com.st.stm32cube.ide.mcu.ide/META-INF/version/build_ref file not found, build reference will not be reported into properties
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-03-27 05:37:51.370
+!MESSAGE Indexed 'week3_ADC' (24 sources, 101 headers) in 8.76 sec: 8,179 declarations; 32,436 references; 2 unresolved inclusions; 42 syntax errors; 147 unresolved names (0.36%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-03-27 05:37:56.331
+!MESSAGE Indexed 'week2_GPIO_ButtonMatrix' (22 sources, 99 headers) in 4.91 sec: 7,882 declarations; 29,012 references; 2 unresolved inclusions; 42 syntax errors; 147 unresolved names (0.4%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-03-27 05:38:00.059
+!MESSAGE Indexed 'week1_GPIO' (22 sources, 99 headers) in 3.7 sec: 7,877 declarations; 28,952 references; 2 unresolved inclusions; 42 syntax errors; 147 unresolved names (0.4%)
